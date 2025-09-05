@@ -18,6 +18,18 @@ This function returns a populated instance of the [`MyOneDimensionalElementaryWo
 function build(modeltype::Type{MyOneDimensionalElementaryWolframRuleModel}, 
     data::NamedTuple)::MyOneDimensionalElementaryWolframRuleModel
 
+    # check: do we have the required keys in the data NamedTuple?
+    required_fields = (:index, :colors, :radius);
+    for field ∈ required_fields
+        if haskey(data, field) == false
+            @error "Ooops! Missing required field: $field. Cannot build the model, returning nothing."
+            return nothing; # Early return we cannot build the model, so return nothing
+        end
+    end
+
+    # Checks: we have the required keys in the data NamedTuple, we should check that they are of the correct type
+    # ...
+
     # initialize -
     index = data.index;
     colors = data.colors;
@@ -25,14 +37,12 @@ function build(modeltype::Type{MyOneDimensionalElementaryWolframRuleModel},
 
     # create an empty model instance -
     model = modeltype();
-    rule = Dict{Int,Int}();
+    rule = Dict{Int,Int}(); # key: neighborhood state, value: resulting state
 
-    # build the rule -
-    number_of_states = colors^radius;
-    states = digits(index, base=colors, pad=number_of_states);
-    for i ∈ 0:number_of_states-1
-        rule[i] = states[i+1];
-    end
+    # TODO: build the rule dictionary from the index, colors, and radius values in the data NamedTuple
+    # TODO: Check out the `digits` function in Julia to help with this task
+    # TODO: Make sure to comment out the throw statement below once you implement this functionality
+    throw(ErrorException("The rule dictionary construction from the index, colors, and radius values has not been implemented yet."));
     
     # set the data on the object
     model.index = index;

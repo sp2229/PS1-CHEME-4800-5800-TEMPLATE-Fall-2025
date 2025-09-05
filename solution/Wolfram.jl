@@ -9,10 +9,6 @@ function _simulate(algorithm::WolframDeterministicSimulation, rulemodel::MyOneDi
     number_of_colors = rulemodel.number_of_colors; # how many colors (states) can each cell have?
     width = length(initial); # how many cells are there?
 
-    # cooldown -
-    cooldown = Dict{Int64, Int64}(); # cooldown for each cell
-    foreach(i -> cooldown[i] = 0, 1:width); # initialize cooldown for each cell
-
     # initialize -
     frames = Dict{Int64, Array{Int64,2}}();
     frame = Array{Int64,2}(undef, steps, width) |> X -> fill!(X, 0);
@@ -26,7 +22,7 @@ function _simulate(algorithm::WolframDeterministicSimulation, rulemodel::MyOneDi
 
         # create the next frame -
         frame = copy(frames[time-1]);
-        tmp = Array{Int64,1}(undef, radius);
+        tmp = Array{Int64,1}(undef, radius) |> a -> fill!(a, 0);
         for i ∈ 1:width
 
             index = nothing;
@@ -96,9 +92,9 @@ function _simulate(algorithm::WolframStochasticSimulation, rulemodel::MyOneDimen
 
         # create the next frame -
         frame = copy(frames[time-1]);
-        tmp = Array{Int64,1}(undef, radius);
+        tmp = Array{Int64,1}(undef, radius) |> a -> fill!(a, 0);
 
-        # generate priority of movement -
+        # generate movement queue -
         for i ∈ 1:width
             pᵢ = parameters === nothing ? 1.0 : parameters[i]; # probability of movement of cell i
             if (cooldown[i] == 0 && rand() < pᵢ && i ∉ collect(q)) # if the cell is not cooling down
@@ -106,10 +102,10 @@ function _simulate(algorithm::WolframStochasticSimulation, rulemodel::MyOneDimen
             end
         end
       
-        # which cell moves first?
+        # main loop -
         movecount = 0;
         while (isempty(q) == false && (maxnumberofmoves === nothing || movecount ≤ maxnumberofmoves))
-            i = dequeue!(q); # a random cell goes -
+            i = dequeue!(q); # we pull a cell from the top of the queue to make a move -
 
             # ok, index i is going to make a move -
             if (cooldownlength > 0)
