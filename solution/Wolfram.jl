@@ -109,7 +109,7 @@ function _simulate(algorithm::WolframStochasticSimulation, rulemodel::MyOneDimen
 
             # ok, index i is going to make a move -
             if (cooldownlength > 0)
-                cooldown[i] = cooldownlength; # set cooldown
+                cooldown[i] = cooldownlength; # cell i has to cool down for cooldownlength steps
             end
 
             index = nothing;
