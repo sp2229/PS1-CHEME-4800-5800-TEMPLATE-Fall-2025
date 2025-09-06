@@ -1,3 +1,2 @@
 # Problem Set 1 (PS1)
-Fill me in.
-
+See the student and solution notebooks.
