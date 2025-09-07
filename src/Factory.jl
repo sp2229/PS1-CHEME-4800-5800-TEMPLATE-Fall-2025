@@ -53,3 +53,36 @@ function build(modeltype::Type{MyOneDimensionalElementaryWolframRuleModel},
     # return
     return model;
 end
+
+# ---
+# Task 1: Build function for MyOneDimensionalElementaryWolframRuleModel
+function build(modeltype::Type{MyOneDimensionalElementaryWolframRuleModel}, data::NamedTuple)::MyOneDimensionalElementaryWolframRuleModel
+    # Check for required fields
+    required = (:index, :colors, :radius)
+    for f in required
+        if !haskey(data, f)
+            @error "Missing required field: $f."
+            return nothing
+        end
+    end
+
+    index = data.index
+    colors = data.colors
+    radius = data.radius
+
+    # Number of possible neighborhood states
+    num_states = colors^(2*radius+1)
+    # Get the digits for the rule, padded to num_states
+    states = digits(index, base=colors, pad=num_states)
+    rule = Dict{Int,Int}()
+    for i in 0:num_states-1
+        rule[i] = states[i+1]
+    end
+
+    model = modeltype()
+    model.index = index
+    model.rule = rule
+    model.radius = radius
+    model.number_of_colors = colors
+    return model
+end
